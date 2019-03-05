@@ -78,7 +78,7 @@ class ModelTranslationServiceProvider extends ServiceProvider
 
         config()->set('filesystems.disks.translation', [
             'driver' => 'local',
-            'root' => storage_path($basePath),
+            'root' => $basePath,
         ]);
     }
 
