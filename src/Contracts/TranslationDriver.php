@@ -1,0 +1,112 @@
+<?php
+
+namespace MisaNeopix\LaravelModelTranslation\Contracts;
+
+use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Model;
+
+interface TranslationDriver
+{
+    /**
+     * This method is used for testing only and is used as an internal helper method in some of the first-party drivers.
+     * It is supposed to store the translations no matter what, without performing any checks.
+     *
+     * @param \Illuminate\Database\Eloquent\Model $model
+     * @param string $language
+     * @param array $translations
+     * @return bool
+     */
+    public function storeTranslationsForModel(Model $model, string $language, array $translations): bool;
+
+    /**
+     * This method is used for fetching a model's translations.
+     * It should return all the available translations for the requested language.
+     *
+     * @param \Illuminate\Database\Eloquent\Model $model
+     * @param string $language
+     * @return array
+     */
+    public function getTranslationsForModel(Model $model, string $language): array;
+
+    /**
+     * This method is similar to the previous one, except that it works with a collection of models.
+     * It is meant to solve the N queries problem, so it is desired that it fetches all the data
+     * in a single call to the persistent storage. However, if that is impossible (e.g. the data is
+     * stored in multiple files on the filesystem), it has to perform multiple calls.
+     *
+     * @param \Illuminate\Support\Collection $models
+     * @param string $language
+     * @return \Illuminate\Support\Collection
+     */
+    public function getTranslationsForModels(Collection $models, string $language): Collection;
+
+    /**
+     * This method returns an array of all the languages that a particular model has translations in.
+     *
+     * @param \Illuminate\Database\Eloquent\Model $model
+     * @return array
+     */
+    public function getAvailableLanguagesForModel(Model $model): array;
+
+    /**
+     * Return an array of all the model instance identifiers available in the provided language.
+     * This is used for implementing the query scope used for loading models available in a particular language.
+     *
+     * @param string $modelIdentifier
+     * @param string $language
+     * @return array
+     */
+    public function getModelsAvailableInLanguage(string $modelIdentifier, string $language): array;
+
+    /**
+     * This method is quire similair to the storeTranslationsForModel() method.
+     * The difference is, this method has to overwrite or remove all the existing translations and store the new ones.
+     * The storeTranslationsForModel() method is not required to remove the existing translation data.
+     *
+     * @param \Illuminate\Database\Eloquent\Model $model
+     * @param string $language
+     * @param array $translations
+     * @return bool
+     */
+    public function putTranslationsForModel(Model $model, string $language, array $translations): bool;
+
+    /**
+     * This method is different from the previous as it should change translations provided to it and store the rest,
+     * however it may not remove any existing translations that weren't passed in through the $translations array.
+     * This is the method being called when a model is being persisted.
+     *
+     * @param \Illuminate\Database\Eloquent\Model $model
+     * @param string $language
+     * @param array $translations
+     * @return bool
+     */
+    public function patchTranslationsForModel(Model $model, string $language, array $translations): bool;
+
+    /**
+     * Delete all translations for a model.
+     *
+     * @param \Illuminate\Database\Eloquent\Model $model
+     * @return bool
+     */
+    public function deleteAllTranslationsForModel(Model $model): bool;
+
+    /**
+     * Delete all translations for a model in a particular language.
+     *
+     * @param \Illuminate\Database\Eloquent\Model $model
+     * @param array $languages
+     * @return bool
+     */
+    public function deleteLanguagesForModel(Model $model, array $languages): bool;
+
+    /**
+     * Delete specific attributes for a model.
+     * Optionally constrain the deletion to a language.
+     *
+     * @param \Illuminate\Database\Eloquent\Model $model
+     * @param array $attributes
+     * @param string|null $language
+     * @return bool
+     */
+    public function deleteAttributesForModel(Model $model, array $attributes, string $language = null): bool;
+}

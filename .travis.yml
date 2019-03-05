@@ -1,0 +1,16 @@
+language: php
+
+php:
+  - 7.2
+  - 7.3
+
+services:
+  - mysql
+
+before_script:
+  - travis_retry composer self-update
+  - travis_retry composer install --no-interaction
+  - mysql -e 'CREATE DATABASE IF NOT EXISTS test;'
+
+script:
+  - vendor/bin/phpunit --config ./tests/phpunit.xml --bootstrap ./vendor/autoload.php
