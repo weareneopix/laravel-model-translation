@@ -1,9 +1,9 @@
 # A robust yet elegant system for translating Eloquent Models
 
+[![Latest Stable Version](https://poser.pugx.org/we-are-neopix/laravel-model-translation/v/stable)](https://packagist.org/packages/we-are-neopix/laravel-model-translation)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
-[![Build Status](https://travis-ci.org/misa-neopix/laravel-model-translation.svg?branch=master)](https://travis-ci.org/misa-neopix/laravel-model-translation)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/misa-neopix/laravel-model-translation/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/misa-neopix/laravel-model-translation/?branch=master)
-[![StyleCI](https://styleci.io/repos/173951106/shield?branch=master)](https://styleci.io/repos/173951106)
+[![Build Status](https://travis-ci.org/weareneopix/laravel-model-translation.svg?branch=master)](https://travis-ci.org/weareneopix/laravel-model-translation)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/weareneopix/laravel-model-translation/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/weareneopix/laravel-model-translation/?branch=master)
 
 
 This package is meant to simplify the process of making Eloquent models translatable. It's aim is to deviate as little as possible from Laravel's
