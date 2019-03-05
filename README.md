@@ -3,7 +3,7 @@
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 [![Build Status](https://travis-ci.org/misa-neopix/laravel-model-translation.svg?branch=master)](https://travis-ci.org/misa-neopix/laravel-model-translation)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/misa-neopix/laravel-model-translation/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/misa-neopix/laravel-model-translation/?branch=master)
-[![StyleCI](https://styleci.io/repos/173752115/shield?branch=master)](https://styleci.io/repos/173752115)
+[![StyleCI](https://styleci.io/repos/173951106/shield?branch=master)](https://styleci.io/repos/173951106)
 
 
 This package is meant to simplify the process of making Eloquent models translatable. It's aim is to deviate as little as possible from Laravel's
