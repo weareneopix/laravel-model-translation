@@ -1,6 +1,6 @@
 <?php
 
-namespace MisaNeopix\LaravelModelTranslation\Commands;
+namespace WeAreNeopix\LaravelModelTranslation\Commands;
 
 use Illuminate\Console\Command;
 

@@ -1,12 +1,12 @@
 <?php
 
-namespace MisaNeopix\LaravelModelTranslation\Test\Unit;
+namespace WeAreNeopix\LaravelModelTranslation\Test\Unit;
 
 use Illuminate\Support\Facades\App;
-use MisaNeopix\LaravelModelTranslation\Translation;
-use MisaNeopix\LaravelModelTranslation\Test\TestCase;
-use MisaNeopix\LaravelModelTranslation\Test\Dependencies\Article;
-use MisaNeopix\LaravelModelTranslation\Test\Dependencies\ArticleWithSoftDeletes as SoftDeletingArticle;
+use WeAreNeopix\LaravelModelTranslation\Translation;
+use WeAreNeopix\LaravelModelTranslation\Test\TestCase;
+use WeAreNeopix\LaravelModelTranslation\Test\Dependencies\Article;
+use WeAreNeopix\LaravelModelTranslation\Test\Dependencies\ArticleWithSoftDeletes as SoftDeletingArticle;
 
 class TranslatesTraitTest extends TestCase
 {

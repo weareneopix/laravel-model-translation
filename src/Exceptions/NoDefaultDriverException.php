@@ -1,6 +1,6 @@
 <?php
 
-namespace MisaNeopix\LaravelModelTranslation\Exceptions;
+namespace WeAreNeopix\LaravelModelTranslation\Exceptions;
 
 use Exception;
 

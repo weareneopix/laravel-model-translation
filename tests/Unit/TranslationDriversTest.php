@@ -1,13 +1,13 @@
 <?php
 
-namespace MisaNeopix\LaravelModelTranslation\Test\Unit;
+namespace WeAreNeopix\LaravelModelTranslation\Test\Unit;
 
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use MisaNeopix\LaravelModelTranslation\Translation;
-use MisaNeopix\LaravelModelTranslation\Test\TestCase;
-use MisaNeopix\LaravelModelTranslation\Test\Dependencies\Article;
-use MisaNeopix\LaravelModelTranslation\Contracts\TranslationDriver;
+use WeAreNeopix\LaravelModelTranslation\Translation;
+use WeAreNeopix\LaravelModelTranslation\Test\TestCase;
+use WeAreNeopix\LaravelModelTranslation\Test\Dependencies\Article;
+use WeAreNeopix\LaravelModelTranslation\Contracts\TranslationDriver;
 
 class TranslationDriversTest extends TestCase
 {

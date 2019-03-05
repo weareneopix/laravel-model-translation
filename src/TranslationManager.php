@@ -1,14 +1,14 @@
 <?php
 
-namespace MisaNeopix\LaravelModelTranslation;
+namespace WeAreNeopix\LaravelModelTranslation;
 
 use Illuminate\Support\Manager;
-use MisaNeopix\LaravelModelTranslation\Contracts\TranslationDriver;
-use MisaNeopix\LaravelModelTranslation\Drivers\JSONTranslationDriver;
-use MisaNeopix\LaravelModelTranslation\Drivers\ArrayTranslationDriver;
-use MisaNeopix\LaravelModelTranslation\Exceptions\NoDefaultDriverException;
-use MisaNeopix\LaravelModelTranslation\Drivers\MySQL\MySQLTranslationDriver;
-use MisaNeopix\LaravelModelTranslation\Exceptions\InvalidTranslationDriverException;
+use WeAreNeopix\LaravelModelTranslation\Contracts\TranslationDriver;
+use WeAreNeopix\LaravelModelTranslation\Drivers\JSONTranslationDriver;
+use WeAreNeopix\LaravelModelTranslation\Drivers\ArrayTranslationDriver;
+use WeAreNeopix\LaravelModelTranslation\Exceptions\NoDefaultDriverException;
+use WeAreNeopix\LaravelModelTranslation\Drivers\MySQL\MySQLTranslationDriver;
+use WeAreNeopix\LaravelModelTranslation\Exceptions\InvalidTranslationDriverException;
 
 class TranslationManager extends Manager
 {
@@ -22,7 +22,7 @@ class TranslationManager extends Manager
     /**
      * Create the JSON translation driver.
      *
-     * @return \MisaNeopix\LaravelModelTranslation\Drivers\JSONTranslationDriver
+     * @return \WeAreNeopix\LaravelModelTranslation\Drivers\JSONTranslationDriver
      */
     public function createJsonDriver()
     {
@@ -32,7 +32,7 @@ class TranslationManager extends Manager
     /**
      * Create the MySQL translation driver.
      *
-     * @return \MisaNeopix\LaravelModelTranslation\Drivers\MySQL\MySQLTranslationDriver
+     * @return \WeAreNeopix\LaravelModelTranslation\Drivers\MySQL\MySQLTranslationDriver
      */
     public function createMysqlDriver()
     {
@@ -42,7 +42,7 @@ class TranslationManager extends Manager
     /**
      * Create the array translation driver.
      *
-     * @return \MisaNeopix\LaravelModelTranslation\Drivers\ArrayTranslationDriver
+     * @return \WeAreNeopix\LaravelModelTranslation\Drivers\ArrayTranslationDriver
      */
     public function createArrayDriver()
     {

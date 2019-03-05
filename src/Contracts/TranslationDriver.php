@@ -1,6 +1,6 @@
 <?php
 
-namespace MisaNeopix\LaravelModelTranslation\Contracts;
+namespace WeAreNeopix\LaravelModelTranslation\Contracts;
 
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;

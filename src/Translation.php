@@ -1,6 +1,6 @@
 <?php
 
-namespace MisaNeopix\LaravelModelTranslation;
+namespace WeAreNeopix\LaravelModelTranslation;
 
 use Illuminate\Support\Facades\Facade;
 

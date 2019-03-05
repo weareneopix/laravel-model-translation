@@ -1,12 +1,12 @@
 <?php
 
-namespace MisaNeopix\LaravelModelTranslation\Drivers\MySQL;
+namespace WeAreNeopix\LaravelModelTranslation\Drivers\MySQL;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
-use MisaNeopix\LaravelModelTranslation\Contracts\TranslationDriver;
+use WeAreNeopix\LaravelModelTranslation\Contracts\TranslationDriver;
 
 class MySQLTranslationDriver implements TranslationDriver
 {

@@ -1,18 +1,18 @@
 <?php
 
-namespace MisaNeopix\LaravelModelTranslation\Test\Unit;
+namespace WeAreNeopix\LaravelModelTranslation\Test\Unit;
 
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
-use MisaNeopix\LaravelModelTranslation\Translation;
-use MisaNeopix\LaravelModelTranslation\Test\TestCase;
-use MisaNeopix\LaravelModelTranslation\TranslationManager;
-use MisaNeopix\LaravelModelTranslation\Contracts\TranslationDriver;
-use MisaNeopix\LaravelModelTranslation\Drivers\JSONTranslationDriver;
-use MisaNeopix\LaravelModelTranslation\Drivers\ArrayTranslationDriver;
-use MisaNeopix\LaravelModelTranslation\Exceptions\NoDefaultDriverException;
-use MisaNeopix\LaravelModelTranslation\Drivers\MySQL\MySQLTranslationDriver;
-use MisaNeopix\LaravelModelTranslation\Exceptions\InvalidTranslationDriverException;
+use WeAreNeopix\LaravelModelTranslation\Translation;
+use WeAreNeopix\LaravelModelTranslation\Test\TestCase;
+use WeAreNeopix\LaravelModelTranslation\TranslationManager;
+use WeAreNeopix\LaravelModelTranslation\Contracts\TranslationDriver;
+use WeAreNeopix\LaravelModelTranslation\Drivers\JSONTranslationDriver;
+use WeAreNeopix\LaravelModelTranslation\Drivers\ArrayTranslationDriver;
+use WeAreNeopix\LaravelModelTranslation\Exceptions\NoDefaultDriverException;
+use WeAreNeopix\LaravelModelTranslation\Drivers\MySQL\MySQLTranslationDriver;
+use WeAreNeopix\LaravelModelTranslation\Exceptions\InvalidTranslationDriverException;
 
 class TranslationManagerTest extends TestCase
 {

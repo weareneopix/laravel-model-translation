@@ -1,11 +1,11 @@
 <?php
 
-namespace MisaNeopix\LaravelModelTranslation\Drivers;
+namespace WeAreNeopix\LaravelModelTranslation\Drivers;
 
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use PHPUnit\Framework\Assert as PHPUnit;
-use MisaNeopix\LaravelModelTranslation\Contracts\TranslationDriver;
+use WeAreNeopix\LaravelModelTranslation\Contracts\TranslationDriver;
 
 class ArrayTranslationDriver implements TranslationDriver
 {

@@ -1,12 +1,12 @@
 <?php
 
-namespace MisaNeopix\LaravelModelTranslation\Drivers;
+namespace WeAreNeopix\LaravelModelTranslation\Drivers;
 
 use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Filesystem\FilesystemAdapter as StorageDisk;
-use MisaNeopix\LaravelModelTranslation\Contracts\TranslationDriver;
+use WeAreNeopix\LaravelModelTranslation\Contracts\TranslationDriver;
 
 class JSONTranslationDriver implements TranslationDriver
 {

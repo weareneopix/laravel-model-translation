@@ -1,10 +1,10 @@
 <?php
 
-namespace MisaNeopix\LaravelModelTranslation\Test\Dependencies;
+namespace WeAreNeopix\LaravelModelTranslation\Test\Dependencies;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use MisaNeopix\LaravelModelTranslation\Translates;
+use WeAreNeopix\LaravelModelTranslation\Translates;
 
 class ArticleWithSoftDeletes extends Model
 {

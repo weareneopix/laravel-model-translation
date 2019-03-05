@@ -1,9 +1,9 @@
 <?php
 
-namespace MisaNeopix\LaravelModelTranslation\Test\Dependencies;
+namespace WeAreNeopix\LaravelModelTranslation\Test\Dependencies;
 
 use Illuminate\Database\Eloquent\Model;
-use MisaNeopix\LaravelModelTranslation\Translates;
+use WeAreNeopix\LaravelModelTranslation\Translates;
 
 class Article extends Model
 {

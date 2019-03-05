@@ -1,6 +1,6 @@
 <?php
 
-namespace MisaNeopix\LaravelModelTranslation\Drivers\MySQL;
+namespace WeAreNeopix\LaravelModelTranslation\Drivers\MySQL;
 
 use Illuminate\Database\Eloquent\Model;
 

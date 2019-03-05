@@ -1,18 +1,18 @@
 <?php
 
-namespace MisaNeopix\LaravelModelTranslation\Test\Extensions;
+namespace WeAreNeopix\LaravelModelTranslation\Test\Extensions;
 
 use Tests\TestCase;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use MisaNeopix\LaravelModelTranslation\Translation;
-use MisaNeopix\LaravelModelTranslation\Test\Dependencies\Article;
+use WeAreNeopix\LaravelModelTranslation\Translation;
+use WeAreNeopix\LaravelModelTranslation\Test\Dependencies\Article;
 
 class UserExtensionsTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @var \MisaNeopix\LaravelModelTranslation\Contracts\TranslationDriver */
+    /** @var \WeAreNeopix\LaravelModelTranslation\Contracts\TranslationDriver */
     protected $driver;
 
     /** @var string */

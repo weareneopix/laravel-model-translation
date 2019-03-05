@@ -1,10 +1,10 @@
 <?php
 
-namespace MisaNeopix\LaravelModelTranslation\Test;
+namespace WeAreNeopix\LaravelModelTranslation\Test;
 
-use MisaNeopix\LaravelModelTranslation\Translation;
+use WeAreNeopix\LaravelModelTranslation\Translation;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
-use MisaNeopix\LaravelModelTranslation\ModelTranslationServiceProvider;
+use WeAreNeopix\LaravelModelTranslation\ModelTranslationServiceProvider;
 
 class TestCase extends OrchestraTestCase
 {

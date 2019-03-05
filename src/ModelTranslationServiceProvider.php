@@ -1,14 +1,14 @@
 <?php
 
-namespace MisaNeopix\LaravelModelTranslation;
+namespace WeAreNeopix\LaravelModelTranslation;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Filesystem\FilesystemAdapter as StorageDisk;
-use MisaNeopix\LaravelModelTranslation\Drivers\JSONTranslationDriver;
-use MisaNeopix\LaravelModelTranslation\Commands\TestTranslationExtensions;
+use WeAreNeopix\LaravelModelTranslation\Drivers\JSONTranslationDriver;
+use WeAreNeopix\LaravelModelTranslation\Commands\TestTranslationExtensions;
 
 class ModelTranslationServiceProvider extends ServiceProvider
 {

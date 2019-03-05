@@ -1,5 +1,5 @@
 {
-    "name": "misa-neopix/laravel-model-translation",
+    "name": "we-are-neopix/laravel-model-translation",
     "description": "This package is a driver based solution to translating Laravel models. It contains two drivers for storing translations in the database and in a JSON file, but also contains a plug-and-play system for its users to implement custom drivers for storing translations and use them with the package.",
     "keywords": [
         "neopix",
@@ -37,12 +37,12 @@
     },
     "autoload": {
         "psr-4": {
-            "MisaNeopix\\LaravelModelTranslation\\": "src"
+            "WeAreNeopix\\LaravelModelTranslation\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "MisaNeopix\\LaravelModelTranslation\\Test\\": "tests"
+            "WeAreNeopix\\LaravelModelTranslation\\Test\\": "tests"
         }
     },
     "scripts": {
@@ -54,10 +54,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "MisaNeopix\\LaravelModelTranslation\\ModelTranslationServiceProvider"
+                "WeAreNeopix\\LaravelModelTranslation\\ModelTranslationServiceProvider"
             ],
             "aliases": {
-                "Translation": "MisaNeopix\\LaravelModelTranslation\\Translation"
+                "Translation": "WeAreNeopix\\LaravelModelTranslation\\Translation"
             }
         }
     }
