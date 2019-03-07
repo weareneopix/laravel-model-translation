@@ -15,7 +15,7 @@ After setting the package up, all that takes to use your models with translation
 ```php
 $post = BlogPost::find(1); // An instance of the BlogPost model
 
-App::setLocale('rs');
+App::setLocale('sr');
 $post->title = 'Naslov na srpskom';
 $post->save();
 
@@ -24,7 +24,7 @@ $post->title = 'Title in English';
 $post->save();
 
 $post->title; // Returns 'Title in English';
-$post->setLanguage('rs')->title; // Returns 'Naslov na srpskom'
+$post->setLanguage('sr')->title; // Returns 'Naslov na srpskom'
 ```
 
 Since this is a driver-based solution, you have the full power to implement the architecture for persistently storing translations yourself. 

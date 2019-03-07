@@ -4,6 +4,7 @@
     "keywords": [
         "neopix",
         "laravel-model-translation",
+        "laravel",
         "translation",
         "multi-language",
         "eloquent",
@@ -46,7 +47,7 @@
         }
     },
     "scripts": {
-        "test": "vendor/bin/phpunit --autoload vendor/autoload.php --config vendor/misa-neopix/laravel-model/translation/tests/phpunit.xml"
+        "test": "vendor/bin/phpunit --config tests/phpunit.xml --bootstrap vendor/autoload.php"
     },
     "config": {
         "sort-packages": true
