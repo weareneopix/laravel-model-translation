@@ -35,31 +35,12 @@ class TranslationDriversTest extends TestCase
     }
 
     /**
-     * Create an Article model with translations.
-     *
-     * @param array $translations
-     * @param array $articleOverride
-     * @return Article
-     */
-    protected function makeArticleWithTranslations(array $translations = [], array $articleOverride = [])
-    {
-        $article = Article::make(array_merge([
-            'id' => 1,
-        ], $articleOverride));
-
-        foreach ($translations as $language => $translation) {
-            $this->driver->storeTranslationsForModel($article, $language, $translation);
-        }
-
-        return $article;
-    }
-
-    /**
      * @test
      * @dataProvider availableDrivers
      */
     public function driver_can_return_translations_for_model($driverName)
     {
+        $this->withoutJobs();
         $this->driver = Translation::driver($driverName);
         $article = $this->makeArticleWithTranslations([
             'en' => [
@@ -96,6 +77,7 @@ class TranslationDriversTest extends TestCase
      */
     public function driver_can_return_translations_for_multiple_models($driverName)
     {
+        $this->withoutJobs();
         $this->driver = Translation::driver($driverName);
         $articles = collect([
             Article::make(['id' => 1]),
@@ -140,6 +122,7 @@ class TranslationDriversTest extends TestCase
      */
     public function driver_can_put_translations_for_the_model_thus_overriding_any_previous_translations($driverName)
     {
+        $this->withoutJobs();
         $this->driver = Translation::driver($driverName);
         $article = $this->makeArticleWithTranslations([
             'en' => [
@@ -164,6 +147,7 @@ class TranslationDriversTest extends TestCase
      */
     public function driver_can_patch_the_requested_translations_without_affecting_any_others($driverName)
     {
+        $this->withoutJobs();
         $this->driver = Translation::driver($driverName);
         $article = $this->makeArticleWithTranslations([
             'en' => [
@@ -189,6 +173,7 @@ class TranslationDriversTest extends TestCase
      */
     public function driver_can_delete_all_translations_for_a_model($driverName)
     {
+        $this->withoutJobs();
         $this->driver = Translation::driver($driverName);
         $article = $this->makeArticleWithTranslations([
             'en' => [
@@ -214,6 +199,7 @@ class TranslationDriversTest extends TestCase
      */
     public function driver_can_delete_all_translations_for_a_model_in_specific_languages($driverName)
     {
+        $this->withoutJobs();
         $this->driver = Translation::driver($driverName);
         $article = $this->makeArticleWithTranslations([
             'en' => [
@@ -249,6 +235,7 @@ class TranslationDriversTest extends TestCase
      */
     public function driver_can_delete_specific_translations_for_a_model_in_all_languages($driverName)
     {
+        $this->withoutJobs();
         $this->driver = Translation::driver($driverName);
         $article = $this->makeArticleWithTranslations([
             'en' => [
@@ -280,6 +267,7 @@ class TranslationDriversTest extends TestCase
      */
     public function driver_can_delete_specific_translations_for_a_model_in_a_specific_language($driverName)
     {
+        $this->withoutJobs();
         $this->driver = Translation::driver($driverName);
         $article = $this->makeArticleWithTranslations([
             'en' => [
@@ -310,8 +298,31 @@ class TranslationDriversTest extends TestCase
      * @test
      * @dataProvider availableDrivers
      */
+    public function deleting_all_translations_for_a_language_will_remove_the_language_from_the_list_of_available_languages($driverName)
+    {
+        $this->withoutJobs();
+        $this->driver = Translation::driver($driverName);
+        $article = $this->makeArticleWithTranslations([
+            'en' => [
+                'title' => 'Title in English',
+                'body' => 'Body in English',
+                'description' => 'Description in English'
+            ]
+        ]);
+        $this->assertEquals(['en'], $this->driver->getAvailableLanguagesForModel($article));
+
+        $this->driver->deleteAttributesForModel($article, ['title', 'body', 'description'], 'en');
+
+        $this->assertEmpty($this->driver->getAvailableLanguagesForModel($article));
+    }
+
+    /**
+     * @test
+     * @dataProvider availableDrivers
+     */
     public function driver_can_return_an_array_of_all_the_available_languages_for_a_model($driverName)
     {
+        $this->withoutJobs();
         $this->driver = Translation::driver($driverName);
         $article = $this->makeArticleWithTranslations([
             'en' => [
@@ -335,6 +346,7 @@ class TranslationDriversTest extends TestCase
      */
     public function deleting_all_language_translations_will_delete_the_language_from_the_list_of_available_languages($driverName)
     {
+        $this->withoutJobs();
         $this->driver = Translation::driver($driverName);
         $article = $this->makeArticleWithTranslations([
             'en' => [
@@ -357,6 +369,7 @@ class TranslationDriversTest extends TestCase
      */
     public function language_will_be_present_in_all_languages_list_as_long_as_it_has_at_least_a_single_translation($driverName)
     {
+        $this->withoutJobs();
         $this->driver = Translation::driver($driverName);
         $article = $this->makeArticleWithTranslations([
             'en' => [

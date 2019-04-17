@@ -112,6 +112,10 @@ class ArrayTranslationDriver implements TranslationDriver
             foreach ($attributes as $attribute) {
                 unset($this->translations[$model->getModelIdentifier()][$model->getInstanceIdentifier()][$language][$attribute]);
             }
+
+            if (empty($this->translations[$model->getModelIdentifier()][$model->getInstanceIdentifier()][$language])) {
+                unset($this->translations[$model->getModelIdentifier()][$model->getInstanceIdentifier()][$language]);
+            }
         }
 
         return true;

@@ -130,7 +130,13 @@ class JSONTranslationDriver implements TranslationDriver
         foreach ($paths as $filePath) {
             $translations = json_decode($this->disk->get($filePath), true);
             $newTranslations = array_diff_key($translations, array_flip($attributes));
-            $this->disk->put($filePath, json_encode($newTranslations));
+
+            if (empty($newTranslations)) {
+                $this->disk->delete($filePath);
+            } else {
+                $this->disk->put($filePath, json_encode($newTranslations));
+            }
+
         }
 
         return true;
