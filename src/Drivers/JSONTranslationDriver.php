@@ -15,9 +15,6 @@ class JSONTranslationDriver implements TranslationDriver
     /** @var StorageDisk */
     protected $disk;
 
-    /** @var string */
-    protected $mapName = 'meta/map.json';
-
     public function __construct(StorageDisk $disk)
     {
         $this->disk = $disk;
@@ -75,9 +72,9 @@ class JSONTranslationDriver implements TranslationDriver
 
     public function getModelsAvailableInLanguage(string $modelIdentifier, string $language): array
     {
-        $map = $this->getLanguageModelMap();
+        $map = $this->getLanguageModelMap($language);
 
-        return $map[$language][$modelIdentifier] ?? [];
+        return $map[$modelIdentifier] ?? [];
     }
 
     public function putTranslationsForModel(Model $model, string $language, array $translations): bool
@@ -157,101 +154,81 @@ class JSONTranslationDriver implements TranslationDriver
     protected function addModelToLanguageMap(Model $model, string $language)
     {
         $modelIdentifier = $model->getModelIdentifier();
-        $map = $this->getLanguageModelMap();
+        $instanceIdentifier = $model->getInstanceIdentifier();
+        $map = $this->getLanguageModelMap($language);
 
-        $instances = collect($map[$language][$modelIdentifier] ?? []);
-        $instances->push($model->getInstanceIdentifier());
-
-        $map[$language][$modelIdentifier] = $instances->unique()->toArray();
-        $this->saveMap($map);
+        if (!array_key_exists($modelIdentifier, $map)) {
+            $map[$modelIdentifier] = [$instanceIdentifier];
+            $this->saveMap($map, $language);
+        } elseif (!in_array($instanceIdentifier, $map[$modelIdentifier])) {
+            $map[$modelIdentifier][] = $instanceIdentifier;
+            $this->saveMap($map, $language);
+        }
     }
 
     protected function removeModelFromLanguageMap(Model $model, string $language)
     {
         $modelIdentifier = $model->getModelIdentifier();
         $modelInstanceIdentifier = $model->getInstanceIdentifier();
-        $map = $this->getLanguageModelMap();
+        $map = $this->getLanguageModelMap($language);
 
-        $instances = collect($map[$language][$modelIdentifier])->filter(function ($instanceIdentifier) use ($modelInstanceIdentifier) {
+        $instances = collect($map[$modelIdentifier])->filter(function ($instanceIdentifier) use ($modelInstanceIdentifier) {
             return $instanceIdentifier != $modelInstanceIdentifier;
         })->values();
 
-        $map[$language][$modelIdentifier] = $instances->toArray();
+        $map[$modelIdentifier] = $instances->toArray();
 
-        $map = $this->removeRedundancyFromMap($map, [$language]);
+        $map = $this->removeRedundancyFromMap($map, $language);
 
-        $this->saveMap($map);
+        (empty($map)) ? $this->removeMap($language) : $this->saveMap($map, $language);
     }
 
     public function removeModelFromAllLanguages(Model $model)
     {
-        $map = $this->getLanguageModelMap();
-        $modelInstanceIdentifier = $model->getInstanceIdentifier();
-        $modelIdentifier = $model->getModelIdentifier();
-        $affectedLanguages = [];
-
-        foreach ($map as $language => $models) {
-            // Check if any translations are available for any instances of the specified model
-            if (!array_key_exists($modelIdentifier, $models)) {
-                continue;
-            }
-
-            // Filter the existing instance identifiers in order to remove the specified model's instance identifier
-            $instanceIdentifiers = collect($map[$language][$modelIdentifier])->filter(function ($instanceIdentifier) use ($modelInstanceIdentifier) {
-                return $instanceIdentifier != $modelInstanceIdentifier;
-            })->values();
-
-            if ($instanceIdentifiers->count() != count($map[$language][$modelIdentifier])) {
-                $affectedLanguages[] = $language;
-            }
-
-            // Store the filtered identifiers in the map
-            $map[$language][$modelIdentifier] = $instanceIdentifiers->toArray();
+        $languages = $this->getAvailableLanguagesForModel($model);
+        foreach ($languages as $language) {
+            $this->removeModelFromLanguageMap($model, $language);
         }
-
-        $map = $this->removeRedundancyFromMap($map, $affectedLanguages);
-
-        $this->saveMap($map);
     }
 
 
-    protected function initializeMap()
+    protected function initializeMap(string $language)
     {
-        $this->disk->put($this->mapName, json_encode([]));
+        $this->disk->put($this->mapName($language), json_encode([]));
     }
 
-    protected function getLanguageModelMap()
+    protected function mapName(string $language)
     {
-        if (!$this->disk->has($this->mapName)) {
-            $this->initializeMap();
-        }
-
-        return json_decode($this->disk->get($this->mapName), true);
+        return "meta" . DIRECTORY_SEPARATOR . "{$language}.json";
     }
 
-    protected function removeRedundancyFromMap(array $map, array $affectedLanguages) {
-        foreach ($affectedLanguages as $language) {
-            if (!array_key_exists($language, $map)) {
-                continue;
-            }
-            $models = $map[$language];
-            foreach ($models as $modelIdentifier => $instances) {
-                if (empty($instances)) {
-                    unset($map[$language][$modelIdentifier]);
-                }
-            }
-
-            if (empty($map[$language])) {
-                unset($map[$language]);
-            }
+    protected function getLanguageModelMap($language)
+    {
+        if (!$this->disk->has($this->mapName($language))) {
+            $this->initializeMap($language);
+            return [];
         }
 
+        return json_decode($this->disk->get($this->mapName($language)), true);
+    }
+
+    protected function removeRedundancyFromMap(array $map) {
+        foreach ($map as $modelIdentifier => $instances) {
+            if (empty($instances)) {
+                unset($map[$modelIdentifier]);
+            }
+        }
         return $map;
     }
 
-    protected function saveMap(array $map)
+    protected function saveMap(array $map, string $language)
     {
-        $this->disk->put($this->mapName, json_encode($map));
+        $this->disk->put($this->mapName($language), json_encode($map));
+    }
+
+    protected function removeMap(string $language)
+    {
+        $this->disk->delete($this->mapName($language));
     }
 
 

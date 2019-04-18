@@ -47,11 +47,11 @@ class JsonDriverTest extends TestCase
      * @return array
      * @throws \ReflectionException
      */
-    protected function getMap()
+    protected function getMap(string $language)
     {
         $method = $this->getProtectedMethod('getLanguageModelMap');
 
-        return $method->invoke($this->driver);
+        return $method->invokeArgs($this->driver, [$language]);
     }
 
     /**
@@ -75,6 +75,7 @@ class JsonDriverTest extends TestCase
         return $article;
     }
 
+
     /** @test */
     public function driver_can_return_the_language_model_map()
     {
@@ -84,11 +85,9 @@ class JsonDriverTest extends TestCase
             ]
         ]);
 
-        $returnedMap = $this->getMap();
+        $returnedMap = $this->getMap('en');
         $this->assertEquals([
-            'en' => [
-                Article::class => [1]
-            ]
+            Article::class => [1]
         ], $returnedMap);
     }
 
@@ -96,13 +95,13 @@ class JsonDriverTest extends TestCase
     public function driver_will_initialize_a_map_if_it_does_not_exist()
     {
         $disk = Storage::disk('translation');
-        $disk->delete('meta/map.json');
-        $disk->assertMissing('meta/map.json');
+        $disk->delete('meta/en.json');
+        $disk->assertMissing('meta/en.json');
         $method = $this->getProtectedMethod('getLanguageModelMap');
 
-        $method->invoke($this->driver);
+        $method->invokeArgs($this->driver, ['en']);
 
-        $disk->assertExists('meta/map.json');
+        $disk->assertExists('meta/en.json');
     }
 
     /** @test */
@@ -110,20 +109,17 @@ class JsonDriverTest extends TestCase
     {
         $method = $this->getProtectedMethod('saveMap');
         $disk = Storage::disk('translation');
-        $disk->delete('meta/map.json');
+        $disk->delete('meta/en.json');
         $newMap = [
-            'en' => [
-                Article::class => [
-                    1
-                ]
-            ]
+            Article::class => [1]
         ];
 
-        $method->invokeArgs($this->driver, [$newMap]);
+        $method->invokeArgs($this->driver, [$newMap, 'en']);
 
-        $disk->assertExists('meta/map.json');
-        $this->assertEquals(json_encode($newMap), $disk->get('meta/map.json'));
+        $disk->assertExists('meta/en.json');
+        $this->assertEquals(json_encode($newMap), $disk->get('meta/en.json'));
     }
+
 
     /** @test */
     public function driver_can_add_a_model_instance_to_the_language_model_map()
@@ -141,18 +137,36 @@ class JsonDriverTest extends TestCase
     }
 
     /** @test */
-    public function driver_can_add_a_model_class_to_the_language_model_map_when_adding_an_instance()
+    public function driver_will_add_a_model_class_to_the_language_model_map_when_adding_an_instance()
     {
-        $map = $this->getMap();
+        $map = $this->getMap('en');
         $method = $this->getProtectedMethod('addModelToLanguageMap');
         $this->assertEmpty($map);
         $article = $this->makeArticleWithTranslations([]);
 
         $method->invokeArgs($this->driver, [$article, 'en']);
 
-        $newMap = $this->getMap();
-        $this->assertArrayHasKey(Article::class, $newMap['en']);
+        $newMap = $this->getMap('en');
+        $this->assertArrayHasKey(Article::class, $newMap);
     }
+
+    /** @test */
+    public function driver_will_add_a_langauge_to_the_map_when_adding_a_model_if_that_language_has_no_previous_translations()
+   {
+       $disk = Storage::disk('translation');
+       $method = $this->getProtectedMethod('addModelToLanguageMap');
+       $disk->delete('meta/en.json');
+       $disk->assertMissing('meta/en.json');
+       $article = Article::make();
+       $article->id = 1;
+
+       $method->invokeArgs($this->driver, [$article, 'en']);
+
+       $disk->assertExists('meta/en.json');
+       $this->assertEquals([
+           Article::class => [1]
+       ], $this->getMap('en'));
+   }
 
     /** @test */
     public function existing_model_instances_in_map_will_remain_intact_upon_addition()
@@ -182,6 +196,29 @@ class JsonDriverTest extends TestCase
     }
 
     /** @test */
+    public function existing_model_classes_in_map_will_remain_intact_upon_addition()
+    {
+        $method = $this->getProtectedMethod('addModelToLanguageMap');
+        $existingArticle = $this->makeAndSyncArticle([
+            'en' => [
+                'title' => 'Title in English'
+            ]
+        ]);
+        $newArticle = ArticleWithSoftDeletes::make();
+        $newArticle->id = 1;
+        $this->assertEquals([
+            Article::class => [1]
+        ], $this->getMap('en'));
+
+        $method->invokeArgs($this->driver, [$newArticle, 'en']);
+
+        $this->assertEquals([
+            Article::class => [1],
+            ArticleWithSoftDeletes::class => [1]
+        ], $this->getMap('en'));
+    }
+
+    /** @test */
     public function driver_will_not_store_duplicates_of_instance_identifiers_in_the_map()
     {
         $method = $this->getProtectedMethod('addModelToLanguageMap');
@@ -191,19 +228,16 @@ class JsonDriverTest extends TestCase
             ]
         ]);
         $this->assertEquals([
-            'en' => [
-                Article::class => [1]
-            ]
-        ], $this->getMap());
+            Article::class => [1]
+        ], $this->getMap('en'));
 
         $method->invokeArgs($this->driver, [$article, 'en']);
 
         $this->assertEquals([
-            'en' => [
-                Article::class => [1]
-            ]
-        ], $this->getMap());
+            Article::class => [1]
+        ], $this->getMap('en'));
     }
+
 
     /** @test */
     public function driver_can_remove_a_model_instance_from_the_language_model_map()
@@ -223,7 +257,7 @@ class JsonDriverTest extends TestCase
     }
 
     /** @test */
-    public function driver_can_remove_a_model_class_from_the_map_when_removing_its_last_instance()
+    public function driver_will_remove_a_model_class_from_the_map_when_removing_its_last_instance()
     {
         $article = $this->makeAndSyncArticle([
             'en' => [
@@ -238,27 +272,25 @@ class JsonDriverTest extends TestCase
             'title' => 'Another article'
         ]);
         $this->driver->syncModelsForLanguage('en', $anotherModel);
-        $map = $this->getMap();
+        $map = $this->getMap('en');
         $this->assertEquals([
-            'en' => [
-                Article::class => [1],
-                ArticleWithSoftDeletes::class => [1]
-            ],
+            Article::class => [1],
+            ArticleWithSoftDeletes::class => [1]
         ], $map);
         $method = $this->getProtectedMethod('removeModelFromLanguageMap');
 
         $method->invokeArgs($this->driver, [$article, 'en']);
 
         $this->assertEquals([
-            'en' => [
-                ArticleWithSoftDeletes::class => [1]
-            ]
-        ], $this->getMap());
+            ArticleWithSoftDeletes::class => [1]
+        ], $this->getMap('en'));
     }
 
     /** @test */
     public function driver_will_remove_a_language_from_the_map_if_it_has_no_more_translations_when_deleting_a_model_instance()
     {
+        $articleInMap = [Article::class => [1]];
+        $disk = Storage::disk('translation');
         $article = $this->makeAndSyncArticle([
             'en' => [
                 'title' => 'Title in English'
@@ -267,19 +299,16 @@ class JsonDriverTest extends TestCase
                 'title' => 'Espagnolo titlo'
             ]
         ]);
-        $this->assertEquals([
-            'en' => [
-                Article::class => [1]
-            ],
-            'es' => [
-                Article::class => [1]
-            ]
-        ], $this->getMap());
+        $this->assertEquals($articleInMap, $this->getMap('en'));
+        $this->assertEquals($articleInMap, $this->getMap('es'));
+        $disk->assertExists('meta/en.json');
+        $disk->assertExists('meta/es.json');
         $method = $this->getProtectedMethod('removeModelFromLanguageMap');
 
         $method->invokeArgs($this->driver, [$article, 'es']);
 
-        $this->assertArrayNotHasKey('es', $this->getMap());
+        $disk->assertMissing('meta/es.json');
+        $disk->assertExists('meta/en.json');
     }
 
     /** @test */
@@ -302,11 +331,35 @@ class JsonDriverTest extends TestCase
         $method->invokeArgs($this->driver, [$toBeDeleted, 'en']);
 
         $this->assertEquals([
-            'en' => [
-                Article::class => [1]
-            ]
-        ], $this->getMap());
+            Article::class => [1]
+        ], $this->getMap('en'));
     }
+
+    /** @test */
+    public function other_model_classes_will_remain_intact_during_deletion_from_the_map()
+    {
+        $addToMap = $this->getProtectedMethod('addModelToLanguageMap');
+        $removeFromMap = $this->getProtectedMethod('removeModelFromLanguageMap');
+        $article = $this->makeAndSyncArticle([
+            'en' => [
+                'title' => 'Title in English'
+            ]
+        ]);
+        $anotherModelArticle = ArticleWithSoftDeletes::make();
+        $anotherModelArticle->id = 1;
+        $addToMap->invokeArgs($this->driver, [$anotherModelArticle, 'en']);
+        $this->assertEquals([
+            Article::class => [1],
+            ArticleWithSoftDeletes::class => [1]
+        ], $this->getMap('en'));
+
+        $removeFromMap->invokeArgs($this->driver, [$article, 'en']);
+
+        $this->assertEquals([
+            ArticleWithSoftDeletes::class => [1]
+        ], $this->getMap('en'));
+    }
+
 
     /** @test */
     public function driver_can_remove_a_model_instance_from_all_languages_in_the_language_model_map()
@@ -329,40 +382,32 @@ class JsonDriverTest extends TestCase
     /** @test */
     public function driver_will_remove_the_model_class_from_the_language_model_map_when_its_last_instance_is_removed()
     {
-        $articleToBeRemoved = $this->makeAndSyncArticle([
+        $firstClassArticle = $this->makeAndSyncArticle([
             'en' => [
                 'title' => 'Title in English'
-            ],
-            'es' => [
-                'title' => 'Espagnolo titlo'
             ]
         ]);
-        $remainingArticle = $this->makeAndSyncArticle([
-            'en' => [
-                'title' => 'New title in English'
-            ]
-        ], ['id' => 2]);
-        $this->assertEquals([
-            'en' => [
-                Article::class => [1, 2]
-            ],
-            'es' => [
-                Article::class => [1]
-            ]
-        ], $this->getMap());
-
-        $this->driver->removeModelFromAllLanguages($articleToBeRemoved);
+        $secondClassArticle = ArticleWithSoftDeletes::make();
+        $secondClassArticle->id = 1;
+        $this->driver->storeTranslationsForModel($secondClassArticle, 'en', ['title' => 'Title in English']);
+        $this->driver->syncModelsForLanguage('en', $secondClassArticle);
 
         $this->assertEquals([
-            'en' => [
-                Article::class => [2]
-            ],
-        ], $this->getMap());
+            Article::class => [1],
+            ArticleWithSoftDeletes::class => [1]
+        ], $this->getMap('en'));
+
+        $this->driver->removeModelFromAllLanguages($secondClassArticle);
+
+        $this->assertEquals([
+            Article::class => [1]
+        ], $this->getMap('en'));
     }
 
     /** @test */
     public function driver_will_remove_a_language_from_the_map_if_it_has_no_models_in_it_when_deleting_a_model_from_all_languages()
     {
+        $disk = Storage::disk('translation');
         $articleToBeRemoved = $this->makeAndSyncArticle([
             'en' => [
                 'title' => 'Title in English'
@@ -377,21 +422,20 @@ class JsonDriverTest extends TestCase
             ]
         ], ['id' => 2]);
         $this->assertEquals([
-            'en' => [
-                Article::class => [1, 2]
-            ],
-            'es' => [
-                Article::class => [1]
-            ]
-        ], $this->getMap());
+            Article::class => [1, 2]
+        ], $this->getMap('en'));
+        $this->assertEquals([
+            Article::class => [1]
+        ], $this->getMap('es'));
+        $disk->assertExists('meta/en.json');
+        $disk->assertExists('meta/es.json');
 
         $this->driver->removeModelFromAllLanguages($articleToBeRemoved);
 
         $this->assertEquals([
-            'en' => [
-                Article::class => [2]
-            ]
-        ], $this->getMap());
+            Article::class => [2]
+        ], $this->getMap('en'));
+        $disk->assertMissing('meta/es.json');
     }
 
     /** @test */
@@ -423,6 +467,42 @@ class JsonDriverTest extends TestCase
     }
 
     /** @test */
+    public function all_other_model_classes_in_all_languages_will_remain_intact_when_deleting_a_model_from_the_map()
+    {
+        $addToMap = $this->getProtectedMethod('addModelToLanguageMap');
+        $toBeRemoved = $this->makeAndSyncArticle([
+            'en' => [
+                'title' => 'Title in English'
+            ],
+            'sr' => [
+                'title' => 'Naslov na srpskom'
+            ]
+        ]);
+        $anotherModelArticle = ArticleWithSoftDeletes::make();
+        $anotherModelArticle->id = 1;
+        $addToMap->invokeArgs($this->driver, [$anotherModelArticle, 'en']);
+        $addToMap->invokeArgs($this->driver, [$anotherModelArticle, 'sr']);
+        $this->assertEquals([
+            Article::class => [1],
+            ArticleWithSoftDeletes::class => [1]
+        ], $this->getMap('en'));
+        $this->assertEquals([
+            Article::class => [1],
+            ArticleWithSoftDeletes::class => [1]
+        ], $this->getMap('sr'));
+
+        $this->driver->removeModelFromAllLanguages($toBeRemoved);
+
+        $this->assertEquals([
+            ArticleWithSoftDeletes::class => [1]
+        ], $this->getMap('en'));
+        $this->assertEquals([
+            ArticleWithSoftDeletes::class => [1]
+        ], $this->getMap('sr'));
+    }
+
+    
+    /** @test */
     public function driver_can_add_a_model_instance_to_map_when_syncing()
     {
         $this->withoutJobs();
@@ -434,21 +514,16 @@ class JsonDriverTest extends TestCase
                 'title' => 'Title in English',
             ]
         ]);
-        $initialMap = $this->getMap();
-        $this->assertEquals([
-            'en' => $modelInMap
-        ], $initialMap);
+        $initialMap = $this->getMap('en');
+        $this->assertEquals($modelInMap, $initialMap);
 
         $this->driver->storeTranslationsForModel($article, 'es', [
             'title' => 'Espagnolo titlo'
         ]);
         $this->driver->syncModelsForLanguage('es', $article);
 
-        $newMap = $this->getMap();
-        $this->assertEquals([
-            'en' => $modelInMap,
-            'es' => $modelInMap
-        ], $newMap);
+        $this->assertEquals($modelInMap, $this->getMap('en'));
+        $this->assertEquals($modelInMap, $this->getMap('es'));
     }
 
     /** @test */
@@ -458,7 +533,6 @@ class JsonDriverTest extends TestCase
         $modelInMap = [
             Article::class => [1]
         ];
-        $method = $this->getProtectedMethod('getLanguageModelMap');
         $article = $this->makeAndSyncArticle([
             'en' => [
                 'title' => 'Title in English',
@@ -467,18 +541,13 @@ class JsonDriverTest extends TestCase
                 'title' => 'Espagnolo titlo'
             ]
         ]);
-        $initialMap = $method->invoke($this->driver);
-        $this->assertEquals([
-            'en' => $modelInMap,
-            'es' => $modelInMap
-        ], $initialMap);
+        $this->assertEquals($modelInMap, $this->getMap('en'));
+        $this->assertEquals($modelInMap, $this->getMap('es'));
 
         $this->driver->deleteLanguagesForModel($article, ['es']);
         $this->driver->syncModelsForLanguage('es', $article);
 
-        $newMap = $method->invoke($this->driver);
-        $this->assertEquals([
-            'en' => $modelInMap,
-        ], $newMap);
+        $this->assertEquals($modelInMap, $this->getMap('en'));
+        $this->assertEmpty($this->getMap('es'));
     }
 }
