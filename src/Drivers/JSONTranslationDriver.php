@@ -172,7 +172,7 @@ class JSONTranslationDriver implements TranslationDriver
         $modelInstanceIdentifier = $model->getInstanceIdentifier();
         $map = $this->getLanguageModelMap($language);
 
-        $instances = collect($map[$modelIdentifier])->filter(function ($instanceIdentifier) use ($modelInstanceIdentifier) {
+        $instances = collect($map[$modelIdentifier] ?? [])->filter(function ($instanceIdentifier) use ($modelInstanceIdentifier) {
             return $instanceIdentifier != $modelInstanceIdentifier;
         })->values();
 

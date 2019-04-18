@@ -409,6 +409,7 @@ class TranslationDriversTest extends TestCase
      */
     public function driver_can_return_a_list_of_all_the_models_available_in_a_particular_language($driverName)
     {
+        $this->withoutJobs();
         $this->driver = Translation::driver($driverName);
         $articlesInList = collect([
             $this->makeArticleWithTranslations([
@@ -427,6 +428,12 @@ class TranslationDriversTest extends TestCase
                 'title' => "J' existe",
             ],
         ], ['id' => 3]);
+        if ($driverName === 'json') {
+            $articlesInList->merge([$articleNotInList])->map(function (Article $article) {
+                $this->driver->syncModelsForLanguage('en', $article);
+                $this->driver->syncModelsForLanguage('fr', $article);
+            });
+        }
 
         $articlesInLanguage = $this->driver->getModelsAvailableInLanguage(Article::class, 'en');
 
