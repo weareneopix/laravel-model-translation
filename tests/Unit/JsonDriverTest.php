@@ -3,6 +3,7 @@
 namespace WeAreNeopix\LaravelModelTranslation\Test\Unit;
 
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use WeAreNeopix\LaravelModelTranslation\Test\Dependencies\Article;
 use WeAreNeopix\LaravelModelTranslation\Test\Dependencies\ArticleWithSoftDeletes;
 use WeAreNeopix\LaravelModelTranslation\Test\TestCase;
@@ -16,6 +17,8 @@ class JsonDriverTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->app['config']->set('translation.json.cache', true);
 
         /*
          * The Storage::fake() call has to be before the driver initialization call
@@ -55,6 +58,19 @@ class JsonDriverTest extends TestCase
     }
 
     /**
+     * Normalize the model identifier in order to prepare it for naming a directory after it.
+     *
+     * @param $modelIdentifier
+     * @return string
+     */
+    protected function normalizeModelIdentifier($modelIdentifier)
+    {
+        $modelIdentifier = str_replace('\\', '_', $modelIdentifier);
+
+        return Str::slug($modelIdentifier);
+    }
+
+    /**
      * Creates an article and the specified translations for it. Syncs the changes with the language-model map.
      *
      * @param array $languages
@@ -75,6 +91,61 @@ class JsonDriverTest extends TestCase
         return $article;
     }
 
+    /** @test */
+    public function driver_can_get_the_models_available_in_a_language_from_the_map()
+    {
+        $getFromMap = $this->getProtectedMethod('getModelsAvailableInLanguageFromMap');
+        $saveMap = $this->getProtectedMethod('saveMap');
+        $map = [
+            Article::class => [1, 2]
+        ];
+        $saveMap->invokeArgs($this->driver, [$map, 'en']);
+
+        $returnedMap = $getFromMap->invokeArgs($this->driver, [Article::class, 'en']);
+
+        $this->assertEquals([1, 2], $returnedMap);
+    }
+
+    /** @test */
+    public function driver_can_parse_the_models_available_in_a_language()
+    {
+        $disk = Storage::disk('translation');
+        $parseModels = $this->getProtectedMethod('parseModelsAvailableInLanguage');
+        $modelDirectory = $this->normalizeModelIdentifier(Article::class);
+        for ($i = 0; $i < 5; $i++) {
+            $disk->put("{$modelDirectory}/{$i}/en.json", '');
+        }
+
+        $returnedModels = $parseModels->invokeArgs($this->driver, [Article::class, 'en']);
+
+        $this->assertEquals([0, 1, 2, 3, 4], $returnedModels);
+    }
+
+    /**
+     * @test
+     * @testWith [false, [0, 1, 2, 3, 4]]
+     *           [true, [10, 20, 30]]
+     */
+    public function driver_will_use_the_map_when_caching_is_enabled_and_parse_when_it_is_not($caching, $expectedModels)
+    {
+        $this->app['config']->set('translation.json.cache', $caching);
+
+        $saveMap = $this->getProtectedMethod('saveMap');
+        $map = [
+            Article::class => [10, 20, 30]
+        ];
+        $saveMap->invokeArgs($this->driver, [$map, 'en']);
+
+        $modelDirectory = $this->normalizeModelIdentifier(Article::class);
+        $disk = Storage::disk('translation');
+        for ($i = 0; $i < 5; $i++) {
+            $disk->put("{$modelDirectory}/{$i}/en.json", '');
+        }
+
+        $returnedModels = $this->driver->getModelsAvailableInLanguage(Article::class, 'en');
+
+        $this->assertEquals($expectedModels, $returnedModels);
+    }
 
     /** @test */
     public function driver_can_return_the_language_model_map()
