@@ -26,7 +26,9 @@ class JSONTranslationDriver implements TranslationDriver
 
         $content = json_encode($translations);
 
-        SyncModelLanguageMapping::dispatch($model, $language);
+        if (config('translation.json.cache')) {
+            SyncModelLanguageMapping::dispatch($model, $language);
+        }
 
         return $this->disk->put($pathFromDiskRoot, $content);
     }
@@ -72,9 +74,33 @@ class JSONTranslationDriver implements TranslationDriver
 
     public function getModelsAvailableInLanguage(string $modelIdentifier, string $language): array
     {
+        return (config('translation.json.cache'))
+            ? $this->getModelsAvailableInLanguageFromMap($modelIdentifier, $language)
+            : $this->parseModelsAvailableInLanguage($modelIdentifier, $language);
+    }
+
+    protected function getModelsAvailableInLanguageFromMap(string $modelIdentifier, string $language): array
+    {
         $map = $this->getLanguageModelMap($language);
 
         return $map[$modelIdentifier] ?? [];
+    }
+
+    protected function parseModelsAvailableInLanguage(string $modelIdentifier, string $language): array
+    {
+        $modelDirectory = $this->normalizeModelIdentifier($modelIdentifier);
+        $existingInstances = collect($this->disk->directories($modelDirectory));
+
+        $language .= '.json';
+
+        $instancesInLanguage = $existingInstances->filter(function ($instanceDirectoryPath) use ($language) {
+                $path = $instanceDirectoryPath.DIRECTORY_SEPARATOR.$language;
+                return $this->disk->exists($path);
+        });
+
+        return $instancesInLanguage->map(function ($instanceDirectory) {
+            return basename($instanceDirectory);
+        })->toArray();
     }
 
     public function putTranslationsForModel(Model $model, string $language, array $translations): bool
@@ -95,7 +121,9 @@ class JSONTranslationDriver implements TranslationDriver
     {
         $path = $this->getJsonPathForModel($model);
 
-        RemoveModelFromLanguageModelMap::dispatch($model);
+        if (config('translation.json.cache')) {
+            RemoveModelFromLanguageModelMap::dispatch($model);
+        }
 
         return $this->disk->deleteDirectory($path);
     }
@@ -106,7 +134,9 @@ class JSONTranslationDriver implements TranslationDriver
         foreach ($languages as $language) {
             $this->disk->delete($modelDir."{$language}.json");
 
-            SyncModelLanguageMapping::dispatch($model, $language);
+            if (config('translation.json.cache')) {
+                SyncModelLanguageMapping::dispatch($model, $language);
+            }
         }
 
         return true;
@@ -135,7 +165,9 @@ class JSONTranslationDriver implements TranslationDriver
             }
 
             $language = pathinfo($filePath)['filename'];
-            SyncModelLanguageMapping::dispatch($model, $language);
+            if (config('translation.json.cache')) {
+                SyncModelLanguageMapping::dispatch($model, $language);
+            }
         }
 
         return true;

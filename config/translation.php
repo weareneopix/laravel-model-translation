@@ -18,6 +18,15 @@
              */
             'base_path' => storage_path('app/translations'),
 
+            /*
+             * Define whether you want to cache which models are available in which languages using the language-model JSON map.
+             * This significantly reduces the execution time of the JSONTranslationDriver::getModelsAvailableInLanguage() method
+             * and the inLanguage() scope that relies on the before-mentioned method.
+             * The cost of this improvement is slightly slower write operations and a meagerly larger storage consumption,
+             * however writing to the cache will be queued if you have a queue configured and the increase in storage requirement is negligible.
+             */
+            'cache' => true,
+
         ],
 
         /*
