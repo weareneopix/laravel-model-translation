@@ -83,7 +83,7 @@ class ModelTranslationServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register the Eloquent Collection macro used for setting translations on an array of models.
+     * Register the Eloquent Collection macro used for setting translations on an array of Models.
      *
      * @return void
      */
@@ -100,7 +100,7 @@ class ModelTranslationServiceProvider extends ServiceProvider
                 $model->setLanguage($language, false);
             });
 
-            // If requested, we will load the translations for the specified language for all the present models.
+            // If requested, we will load the translations for the specified language for all the present Models.
             // We will do this all in one request to avoid N calls.
             if ($loadLanguage) {
                 $translations = Translation::getTranslationsForModels($this, $language);

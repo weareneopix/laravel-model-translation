@@ -29,7 +29,7 @@ interface TranslationDriver
     public function getTranslationsForModel(Model $model, string $language): array;
 
     /**
-     * This method is similar to the previous one, except that it works with a collection of models.
+     * This method is similar to the previous one, except that it works with a collection of Models.
      * It is meant to solve the N queries problem, so it is desired that it fetches all the data
      * in a single call to the persistent storage. However, if that is impossible (e.g. the data is
      * stored in multiple files on the filesystem), it has to perform multiple calls.
@@ -49,8 +49,8 @@ interface TranslationDriver
     public function getAvailableLanguagesForModel(Model $model): array;
 
     /**
-     * Return an array of all the model instance identifiers available in the provided language.
-     * This is used for implementing the query scope used for loading models available in a particular language.
+     * Return an array of all the model instance identifiers (usually ID's) available in the provided language.
+     * This is used for implementing the query scope used for loading Models available in a particular language.
      *
      * @param string $modelIdentifier
      * @param string $language
@@ -59,7 +59,7 @@ interface TranslationDriver
     public function getModelsAvailableInLanguage(string $modelIdentifier, string $language): array;
 
     /**
-     * This method is quire similair to the storeTranslationsForModel() method.
+     * This method is quite similair to the storeTranslationsForModel() method.
      * The difference is, this method has to overwrite or remove all the existing translations and store the new ones.
      * The storeTranslationsForModel() method is not required to remove the existing translation data.
      *
@@ -71,7 +71,7 @@ interface TranslationDriver
     public function putTranslationsForModel(Model $model, string $language, array $translations): bool;
 
     /**
-     * This method is different from the previous as it should change translations provided to it and store the rest,
+     * This method is different from the previous one as it should change translations provided to it and keep the rest,
      * however it may not remove any existing translations that weren't passed in through the $translations array.
      * This is the method being called when a model is being persisted.
      *
@@ -91,7 +91,7 @@ interface TranslationDriver
     public function deleteAllTranslationsForModel(Model $model): bool;
 
     /**
-     * Delete all translations for a model in a particular language.
+     * Delete all translations for a model in specified languages.
      *
      * @param \Illuminate\Database\Eloquent\Model $model
      * @param array $languages

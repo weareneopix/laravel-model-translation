@@ -63,7 +63,7 @@ class MySQLTranslationDriver implements TranslationDriver
                           ->groupBy('translatable_id');
 
         /*
-         * First we map the translations to their models, setting an empty collection as default
+         * First we map the translations to their Models, setting an empty collection as default
          * We need to do this because the method needs to return an empty array for each model that has no translations.
          */
         $translationsPerModel = $models->mapWithKeys(function (Model $model) use ($translations) {

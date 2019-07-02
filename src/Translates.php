@@ -327,7 +327,7 @@ use Illuminate\Support\Facades\App;
         }
 
         /**
-         * Constrain a query to models models available in the provided language.
+         * Constrain a query to Models Models available in the provided language.
          *
          * @param \Illuminate\Database\Eloquent\Builder $query
          * @param string $language
