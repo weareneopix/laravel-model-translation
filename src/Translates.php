@@ -281,29 +281,29 @@ use Illuminate\Support\Facades\App;
         public static function bootTranslates()
         {
             static::saving(
-            function (Model $model) {
-                $model->separateTranslationsFromAttributes();
-            }
-        );
+                function (Model $model) {
+                    $model->separateTranslationsFromAttributes();
+                }
+            );
 
             // We have to persist the translations after the model has been saved
             // to avoid the case when saving a new model which doesn't exist prior to saving.
             static::saved(
-            function (Model $model) {
-                $model->persistTranslations();
+                function (Model $model) {
+                    $model->persistTranslations();
 
-                $model->mergeTranslationsWithAttributes();
-            }
-        );
+                    $model->mergeTranslationsWithAttributes();
+                }
+            );
 
             static::deleted(
-            function (Model $model) {
-                if ($model->usesSoftDelete() && ! $model->forceDeleting) {
-                    return true;
+                function (Model $model) {
+                    if ($model->usesSoftDelete() && ! $model->forceDeleting) {
+                        return true;
+                    }
+                    $model->deleteTranslations();
                 }
-                $model->deleteTranslations();
-            }
-        );
+            );
         }
 
         /**
