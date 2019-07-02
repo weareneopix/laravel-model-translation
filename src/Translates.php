@@ -75,6 +75,19 @@ use Illuminate\Support\Facades\App;
         }
 
         /**
+         * Return all the translatable attribute names or only the ones present in the first argument.
+         *
+         * @param array $only
+         * @return array
+         */
+        public function getTranslatable(array $only = []): array
+        {
+            return (empty($only))
+                ? $this->translatable
+                : array_intersect($this->translatable, $only);
+        }
+
+        /**
          * Set the current language on the instance.
          * Automatically loads the language if it hasn't been loaded previously.
          *
