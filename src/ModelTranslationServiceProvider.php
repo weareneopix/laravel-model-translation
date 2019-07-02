@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Filesystem\FilesystemAdapter as StorageDisk;
+use WeAreNeopix\LaravelModelTranslation\Commands\MakeDriverCommand;
 use WeAreNeopix\LaravelModelTranslation\Drivers\JSONTranslationDriver;
 use WeAreNeopix\LaravelModelTranslation\Commands\TestTranslationExtensions;
 
@@ -20,7 +21,7 @@ class ModelTranslationServiceProvider extends ServiceProvider
     public function register()
     {
         if ($this->app->runningInConsole()) {
-            $this->commands(TestTranslationExtensions::class);
+            $this->commands(TestTranslationExtensions::class, MakeDriverCommand::class);
         }
 
         $this->app->singleton('translation', function ($app) {
