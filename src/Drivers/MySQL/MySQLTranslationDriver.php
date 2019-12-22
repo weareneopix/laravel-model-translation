@@ -117,14 +117,31 @@ class MySQLTranslationDriver implements TranslationDriver
 
     public function patchTranslationsForModel(Model $model, string $language, array $translations): bool
     {
-        $sql = $this->mysqlCaseUpdate($translations);
-        $translationNames = array_keys($translations);
+        list($existing, $new) = $this->separateExistingFromNewTranslations($model, $language, $translations);
+
+        if (!$this->storeTranslationsForModel($model, $language, $new)) {
+            return false;
+        }
+
+        $sql = $this->mysqlCaseUpdate($existing);
+        $translationNames = array_keys($existing);
 
         return $this->queryForModel($model, $language)
                     ->whereIn('name', $translationNames)
                     ->update([
                         'value' => DB::raw($sql),
                     ]);
+    }
+
+    private function separateExistingFromNewTranslations(Model $model, string $language, array $translations)
+    {
+        $existingTranslations = array_keys($this->getTranslationsForModel($model, $language));
+        $translations = collect($translations);
+
+        return [
+            $translations->only($existingTranslations)->toArray(),
+            $translations->except($existingTranslations)->toArray(),
+        ];
     }
 
     public function deleteAllTranslationsForModel(Model $model): bool

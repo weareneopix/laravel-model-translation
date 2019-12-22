@@ -171,6 +171,31 @@ class TranslationDriversTest extends TestCase
      * @test
      * @dataProvider availableDrivers
      */
+    public function patch_will_create_previously_non_existing_translations($driverName)
+    {
+        $this->driver = Translation::driver($driverName);
+        $article = $this->makeArticleWithTranslations([
+            'en' => [
+                'title' => 'Old Title',
+            ]
+        ]);
+
+        $this->driver->patchTranslationsForModel($article, 'en', [
+            'title' => 'New Title',
+            'body' => 'New Body',
+        ]);
+
+        $translations = $this->driver->getTranslationsForModel($article, 'en');
+        $this->assertEquals([
+            'title' => 'New Title',
+            'body' => 'New Body',
+        ], $translations);
+    }
+
+    /**
+     * @test
+     * @dataProvider availableDrivers
+     */
     public function driver_can_delete_all_translations_for_a_model($driverName)
     {
         $this->withoutJobs();
