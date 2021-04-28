@@ -5,6 +5,8 @@
 [![Build Status](https://travis-ci.org/weareneopix/laravel-model-translation.svg?branch=master)](https://travis-ci.org/weareneopix/laravel-model-translation)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/weareneopix/laravel-model-translation/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/weareneopix/laravel-model-translation/?branch=master)
 
+## For Laravel 7 and 8 use version ~1.2
+
 
 This package is meant to simplify the process of making Eloquent models translatable. It's aim is to deviate as little as possible from Laravel's
 Eloquent API but still provide a satisfiable level of flexibility. This is achieved by utilizing a driver-based approach to storing translations

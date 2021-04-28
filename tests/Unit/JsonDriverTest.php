@@ -85,7 +85,7 @@ class JsonDriverTest extends TestCase
 
         foreach (array_keys($languages) as $language) {
             $this->driver->syncModelsForLanguage($language, $article);
-            $this->assertContains($article->id, $this->driver->getModelsAvailableInLanguage(Article::class, $language));
+            $this->assertContains((string) $article->id, $this->driver->getModelsAvailableInLanguage(Article::class, $language));
         }
 
         return $article;

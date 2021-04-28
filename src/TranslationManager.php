@@ -26,7 +26,7 @@ class TranslationManager extends Manager
      */
     public function createJsonDriver()
     {
-        return $this->app->make(JSONTranslationDriver::class);
+        return $this->container->make(JSONTranslationDriver::class);
     }
 
     /**
@@ -36,7 +36,7 @@ class TranslationManager extends Manager
      */
     public function createMysqlDriver()
     {
-        return $this->app->make(MySQLTranslationDriver::class);
+        return $this->container->make(MySQLTranslationDriver::class);
     }
 
     /**
@@ -46,7 +46,7 @@ class TranslationManager extends Manager
      */
     public function createArrayDriver()
     {
-        return $this->app->make(ArrayTranslationDriver::class);
+        return $this->container->make(ArrayTranslationDriver::class);
     }
 
     /**
@@ -57,7 +57,7 @@ class TranslationManager extends Manager
     public function getDefaultDriver()
     {
         if ($this->defaultDriver === null) {
-            $configDriver = $this->app['config']['translation.driver'];
+            $configDriver = $this->container['config']['translation.driver'];
             if ($configDriver === null) {
                 $message = 'A default translation driver has not been specified.';
                 throw new NoDefaultDriverException($message);
