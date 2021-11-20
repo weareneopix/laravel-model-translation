@@ -123,14 +123,18 @@ class MySQLTranslationDriver implements TranslationDriver
             return false;
         }
 
-        $sql = $this->mysqlCaseUpdate($existing);
-        $translationNames = array_keys($existing);
+        if (count($existing) > 0) {
+            $sql = $this->mysqlCaseUpdate($existing);
+            $translationNames = array_keys($existing);
 
-        return $this->queryForModel($model, $language)
-                    ->whereIn('name', $translationNames)
-                    ->update([
-                        'value' => DB::raw($sql),
-                    ]);
+            return $this->queryForModel($model, $language)
+                        ->whereIn('name', $translationNames)
+                        ->update([
+                            'value' => DB::raw($sql),
+                        ]);
+        }
+
+        return true;
     }
 
     private function separateExistingFromNewTranslations(Model $model, string $language, array $translations)
